@@ -79,7 +79,8 @@
                 <div class="field">
                     <label class="label" for="tagline">Tagline</label>
                     <div class="control">
-                        <input class="input" type="text" placeholder="Arina is love, Arina is life" id="tagline">
+                        <input class="input" type="text" placeholder="Arina is love, Arina is life"
+                               value="Arina is love, Arina is life" id="tagline">
                     </div>
                     <p class="help">Personalise the experience of people reading your nametag!</p>
                 </div>
@@ -599,6 +600,8 @@
     }
 
     updateLabel();
+    document.getElementById('username').value = '';
+    document.getElementById('tagline').value = '';
 </script>
 </body>
 </html>
