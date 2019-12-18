@@ -8,43 +8,50 @@
     <!--<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>-->
 </head>
 <body>
-<section class="section">
-    <section class="container">
-        <h1 class="title">
-            NAC3 nametag generator
-        </h1>
-        <div class="content">
-            <div class="columns">
-                <div class="column is-three-quarters">
-                    <h2 class="subtitle">
-                        Instructions
-                    </h2>
-                    <ol>
-                        <li>Enter your (nick)name, your spoken languages, and a more or less funny tagline in the inputs
-                            below.
-                        </li>
-                        <li>Click "Update Preview" to update the preview on the right.</li>
-                        <li>Adjust the text size of the name until everything fits on one single page.</li>
-                        <li>Click "Save". <b>You will be given a number. Write it down</b> and use it at the NAC3 meetup
-                            to receive your nametag!
-                        </li>
-                        <li>Don't worry: If you forget your number, we can still create a new one at the meetup.</li>
-                    </ol>
-                </div>
-                <div class="column">
-                    <div class="field has-addons">
-                        <div class="control">
-                            <input class="input" type="number" placeholder="Enter id…" id="loadInput">
-                        </div>
-                        <div class="control">
-                            <button class="button is-info" onclick="load()">
-                                Load
-                            </button>
+<section class="hero is-info">
+    <div class="hero-body">
+        <section class="container">
+            <h1 class="title">
+                NAC3 nametag generator
+            </h1>
+            <div class="content">
+                <div class="columns">
+                    <div class="column is-three-quarters">
+                        <h2 class="subtitle">
+                            Instructions
+                        </h2>
+                        <ol>
+                            <li>Enter your (nick)name, your spoken languages, and a more or less funny tagline in the
+                                inputs below.
+                            </li>
+                            <li>Click "Update Preview" to update the preview on the right.</li>
+                            <li>Adjust the text size of the name until everything fits on one single page.</li>
+                            <li>Click "Save". <b>You will be given a number. Write it down</b> and use it at the NAC3
+                                meetup to receive your nametag!
+                            </li>
+                            <li>Don't worry: If you forget your number, we can still create a new one at the meetup.
+                            </li>
+                        </ol>
+                    </div>
+                    <div class="column">
+                        <div class="field has-addons">
+                            <div class="control">
+                                <input class="input" type="number" placeholder="Enter id…" id="loadInput">
+                            </div>
+                            <div class="control">
+                                <button class="button is-info" onclick="load()">
+                                    Load
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
+    </div>
+</section>
+<section class="section">
+    <section class="container">
         <div class="columns">
             <div class="column">
                 <div class="columns">
