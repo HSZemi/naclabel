@@ -154,21 +154,21 @@
                         document.getElementById('languages').value = value.languages;
                         document.getElementById('tagline').value = value.tagline;
                         updateLabel();
-			document.getElementById("loadInput").value = "";
+                        document.getElementById("loadInput").value = "";
                     }
                 }));
     }
 
     document.getElementById("loadInput")
-	    .addEventListener("keyup", function(event) {
-	    event.preventDefault();
-	    if (event.keyCode === 13) {
-		load();
-  	    }
-    });
+        .addEventListener("keyup", function (event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                load();
+            }
+        });
 
     function reset() {
-	console.log('vat');
+        console.log('vat');
         document.getElementById('username').value = "";
         document.getElementById('usernameSize').value = 30;
         document.getElementById('languages').value = "English";
@@ -205,7 +205,7 @@
                 {
                     image: 'logo',
                     fit: [mm(10), mm(40)],
-                    absolutePosition: {x:mm(82), y:mm(42)}
+                    absolutePosition: {x: mm(82), y: mm(42)}
                 },
 
             ],
