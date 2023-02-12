@@ -3,6 +3,7 @@ header('Content-type: application/json');
 if (isset($_GET['save'])
     && isset($_POST['username'])
     && isset($_POST['usernameSize'])
+    && isset($_POST['topMargin'])
     && isset($_POST['languages'])
     && isset($_POST['tagline'])) {
     $number = rand(10000, 99999);
@@ -24,10 +25,11 @@ if (isset($_GET['save'])
     file_put_contents($filepath, json_encode(array(
         'username' => $_POST['username'],
         'usernameSize' => $_POST['usernameSize'],
+        'topMargin' => $_POST['topMargin'],
         'languages' => $_POST['languages'],
         'tagline' => $_POST['tagline']
     )));
-    echo '{"result":"ok","message":"Your number: ' . $number . '"}';
+    echo '{"result":"ok","message":"' . $number . '"}';
 } elseif (isset($_GET['load'])) {
     $number = intval($_GET['load']);
     $filepath = 'data/' . $number . '.json';
