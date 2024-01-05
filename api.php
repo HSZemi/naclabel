@@ -1,46 +1,105 @@
 <?php
-header('Content-type: application/json');
-if (isset($_GET['save'])
-    && isset($_POST['username'])
-    && isset($_POST['usernameSize'])
-    && isset($_POST['topMargin'])
-    && isset($_POST['languages'])
-    && isset($_POST['tagline'])) {
-    $number = rand(10000, 99999);
-    $filepath = 'data/' . $number . '.json';
-    $success = false;
-    for ($i = 0; $i = 10; $i++) {
-        if (!file_exists($filepath)) {
-            $success = true;
-            break;
-        } else {
-            $number = rand(10000, 99999);
-            $filepath = 'data/' . $number . '.json';
+const SECRET = '0000000000111111111122222222223333333333444444444455555555556666';
+const VALIDITY_PERIOD = 5 * 60;
+
+
+function get_time_tokens(): array {
+    $now = time();
+    $seed_time_now = $now - ($now % VALIDITY_PERIOD);
+    $seed_time_previous = $seed_time_now - VALIDITY_PERIOD;
+    $seed_now = hash('sha256', SECRET . $seed_time_now, true);
+    $seed_previous = hash('sha256', SECRET . ($seed_time_previous), true);
+    $generator_now = new Random\Engine\Xoshiro256StarStar($seed_now);
+    $generator_previous = new Random\Engine\Xoshiro256StarStar($seed_previous);
+    $token_now = bin2hex($generator_now->generate());
+    $token_previous = bin2hex($generator_previous->generate());
+    return [$token_previous, $token_now];
+}
+
+function is_valid_time_token($timetoken): bool {
+    $time_tokens = get_time_tokens();
+    return in_array($timetoken, $time_tokens);
+}
+
+function get_random_token(): string {
+    $bytes = random_bytes(32);
+    return bin2hex($bytes);
+}
+
+function get_token($timetoken): void {
+    if (is_valid_time_token($timetoken)) {
+        $random_token = get_random_token();
+        touch('data/' . $random_token);
+        echo '{"result":"ok", "token":"' . $random_token . '"}';
+    } else {
+        echo '{"result":"error", "message": "Sorry, please try scanning the QR code again"}';
+    }
+}
+
+function save_pdf($token, $content): void {
+    $target_file = 'data/' . $token;
+    if (preg_match('/[a-z0-9]+/', $token) && file_exists($target_file)) {
+        file_put_contents($target_file, $content);
+        echo '{"result":"ok", "message": "Your nametag will be printed soon™!"}';
+    } else {
+        echo '{"result":"error", "message": "Sorry, please try scanning the QR code again"}';
+    }
+}
+
+function get_filenames(): void {
+    $result = scandir('data');
+    if ($result === false) {
+        echo json_encode(array("files" => []));
+    } else {
+        $actual_result = [];
+        foreach ($result as $item) {
+            $filesize = filesize('data/' . $item);
+            if (!str_starts_with($item, '.') && ($filesize !== false) && ($filesize > 1)) {
+                $actual_result[] = $item;
+            }
+        }
+        echo json_encode(array("files" => $actual_result));
+    }
+}
+
+function get_pdfs($secret): void {
+    if ($secret === SECRET) {
+        get_filenames();
+    }
+}
+
+function delete($secret, $token): void {
+    if ($secret === SECRET) {
+        $target_file = 'data/' . $token;
+        if (preg_match('/[a-z0-9]+/', $token) && file_exists($target_file)) {
+            unlink($target_file);
+            echo '{"result":"ok"}';
         }
     }
-    if (!$success) {
-        echo '{"result":"error","message":"could not generate number :("}';
-        die();
+}
+
+function get_time_token($secret): void {
+    if ($secret === SECRET) {
+        $tokens = get_time_tokens();
+        echo json_encode(array("timetoken" => $tokens[1]));
     }
-    file_put_contents($filepath, json_encode(array(
-        'username' => $_POST['username'],
-        'usernameSize' => $_POST['usernameSize'],
-        'topMargin' => $_POST['topMargin'],
-        'languages' => $_POST['languages'],
-        'tagline' => $_POST['tagline']
-    )));
-    echo '{"result":"ok","message":"' . $number . '"}';
-} elseif (isset($_GET['load'])) {
-    $number = intval($_GET['load']);
-    $filepath = 'data/' . $number . '.json';
-    if (file_exists($filepath)) {
-        $content = file_get_contents($filepath);
-        echo $content;
-    } else {
-        echo '{"result":"error","message":"No data for number ' . $number . '"}';
-    }
+}
+
+header('Content-type: application/json');
+$data = json_decode(file_get_contents('php://input'), true);
+// end user endpoints
+if (isset($_GET['gettoken']) && isset($data['timetoken'])) {
+    get_token($data['timetoken']);
+} elseif (isset($_GET['savepdf']) && isset($data['token']) && isset($data['content'])) {
+    save_pdf($data['token'], $data['content']);
+// printer endpoints
+} elseif (isset($_GET['getpdfs']) && isset($data['secret'])) {
+    get_pdfs($data['secret']);
+} elseif (isset($_GET['delete']) && isset($data['secret']) && isset($data['token'])) {
+    delete($data['secret'], $data['token']);
+// qr code display endpoint
+} elseif (isset($_GET['gettimetoken']) && isset($data['secret'])) {
+    get_time_token($data['secret']);
 } else {
     echo '{"result":"error","message":"Invalid operation"}';
 }
-
-?>
