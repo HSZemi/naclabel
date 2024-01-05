@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NAC5 nametag generator</title>
+    <link rel="stylesheet" href="bulma.min.css">
+    <style>
+        html {
+            background-color: #111;
+        }
+    </style>
+</head>
+<body>
+<div class="tile">
+    <div class="tile is-parent is-vertical">
+        <article class="tile is-child notification is-primary">
+            <p class="title">How to create your NAC5 nametag</p>
+        </article>
+        <article class="tile is-child notification is-dark">
+            <p class="title">Scan QR Code</p>
+            <p class="subtitle">the one over there 👉 👉 👉</p>
+        </article>
+        <article class="tile is-child notification is-warning">
+            <p class="title">Enter your name and a funny tagline</p>
+            <p class="subtitle">(it does not have to be funny)</p>
+        </article>
+        <article class="tile is-child notification is-warning">
+            <p class="title">Preview your nametag</p>
+            <p class="subtitle">What you see is what you get</p>
+        </article>
+        <article class="tile is-child notification is-warning">
+            <p class="title">Press »Print«!</p>
+            <p class="subtitle">…and wait a couple of seconds</p>
+        </article>
+        <article class="tile is-child notification is-primary">
+            <p class="title">Your nametag gets printed! \o/</p>
+        </article>
+    </div>
+    <div class="tile is-parent">
+        <article class="tile is-child notification is-info">
+            <p class="title">Scan me to create your nametag!</p>
+            <figure class="image is-square">
+                <div id="qrcode"></div>
+            </figure>
+        </article>
+    </div>
+</div>
+<script src="qrcode.min.js"></script>
+<script>
+    const updateQrCode = () => {
+        const secret = window.location.hash.substring(1);
+        if (secret.length !== 64) {
+            alert('Invalid secret :(');
+            return;
+        }
+        fetch('api.php?gettimetoken', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({secret}),
+        }).then(value => value.json()).then(result => {
+            const text = "http://localhost/#" + result.timetoken;
+            console.log(text);
+            document.getElementById("qrcode").innerHTML = '';
+            const qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: text,
+                width: 512,
+                height: 512,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }).catch(reason => alert('Oh no, the qr code could not be loaded. Try pressing F5 and see if it works again.'));
+    }
+    updateQrCode();
+    setInterval(updateQrCode, 10_000);
+</script>
+</body>
+</html>
