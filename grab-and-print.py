@@ -26,6 +26,7 @@ def main():
                 run_result = subprocess.run(['identify', target_file], capture_output=True, text=True)
                 if '288x180' in run_result.stdout:
                     subprocess.run(['lpr', target_file])
+                    requests.post(f'{URL}/api.php?printed', json={'secret': SECRET})
                 else:
                     print(f'Invalid format: {run_result.stdout}')
                 requests.post(f'{URL}/api.php?delete', json={'secret': SECRET, 'token': filename})

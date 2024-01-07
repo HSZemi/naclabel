@@ -54,7 +54,7 @@ function get_filenames(): void {
         $actual_result = [];
         foreach ($result as $item) {
             $filesize = filesize('data/' . $item);
-            if (!str_starts_with($item, '.') && ($filesize !== false) && ($filesize > 1)) {
+            if (!str_starts_with($item, '.') && !str_ends_with($item, '.json') && ($filesize !== false) && ($filesize > 1)) {
                 $actual_result[] = $item;
             }
         }
@@ -65,6 +65,15 @@ function get_filenames(): void {
 function get_pdfs($secret): void {
     if ($secret === SECRET) {
         get_filenames();
+    }
+}
+
+function printed($secret): void {
+    if ($secret === SECRET) {
+        $data = json_decode(file_get_contents('data/count.json'), true);
+        $data['printed']++;
+        file_put_contents('data/count.json', json_encode($data));
+        echo '{"result":"ok"}';
     }
 }
 
@@ -95,6 +104,8 @@ if (isset($_GET['gettoken']) && isset($data['timetoken'])) {
 // printer endpoints
 } elseif (isset($_GET['getpdfs']) && isset($data['secret'])) {
     get_pdfs($data['secret']);
+} elseif (isset($_GET['printed']) && isset($data['secret'])) {
+    printed($data['secret']);
 } elseif (isset($_GET['delete']) && isset($data['secret']) && isset($data['token'])) {
     delete($data['secret'], $data['token']);
 // qr code display endpoint

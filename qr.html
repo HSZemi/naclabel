@@ -35,6 +35,7 @@
         </article>
         <article class="tile is-child notification is-primary">
             <p class="title">Your nametag gets printed! \o/</p>
+            <p class="subtitle"><span id="count"></span> printed so far</p>
         </article>
     </div>
     <div class="tile is-parent">
@@ -74,8 +75,26 @@
             });
         }).catch(reason => alert('Oh no, the qr code could not be loaded. Try pressing F5 and see if it works again.'));
     }
+
+    const reloadPrintedCounter = () => {
+        const secret = window.location.hash.substring(1);
+        if (secret.length !== 64) {
+            return;
+        }
+        fetch('data/count.json', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({secret}),
+        }).then(value => value.json()).then(result => {
+            document.getElementById("count").innerText = result.printed;
+        });
+    }
+    reloadPrintedCounter();
     updateQrCode();
-    setInterval(updateQrCode, 10_000);
+    setInterval(updateQrCode, 60_000);
+    setInterval(reloadPrintedCounter, 10_000);
 </script>
 </body>
 </html>
