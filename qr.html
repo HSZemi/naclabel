@@ -86,7 +86,7 @@
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
-        }).catch(reason => alert('Oh no, the qr code could not be loaded. Try pressing F5 and see if it works again.'));
+        }).catch(reason => document.getElementById("qrcode").innerText = 'Oh no, the qr code could not be loaded. Try pressing F5 and see if it works again.');
     }
 
     const reloadPrintedCounter = () => {
