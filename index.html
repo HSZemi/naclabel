@@ -114,7 +114,6 @@
     let isUpdating = false;
     let shouldUpdate = false;
     let token = '';
-    let content = '';
     pdfMake.fonts = {
         LibreBaskerville: {
             normal: 'LibreBaskerville-Regular.ttf',
@@ -148,17 +147,21 @@
     }
 
     function sendToPrint() {
-        fetch('api.php?savepdf', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({token, content}),
-        }).then(response => response.json()
-            .then(value => {
-                document.getElementById('message').innerText = value.message;
-                document.getElementById('modal').classList.add('is-active');
-            })).catch(reason => alert('Oops! This did not work. Sorry :('));
+        const dd = getDocumentDefinition();
+        const pdf = pdfMake.createPdf(dd);
+        pdf.getBase64((content) => {
+            fetch('api.php?savepdf', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({token, content}),
+            }).then(response => response.json()
+                .then(value => {
+                    document.getElementById('message').innerText = value.message;
+                    document.getElementById('modal').classList.add('is-active');
+                })).catch(reason => alert('Oops! This did not work. Sorry :('));
+        });
     }
 
     function closeModal() {
@@ -605,9 +608,6 @@
         } else {
             const dd = getDocumentDefinition();
             const pdf = pdfMake.createPdf(dd);
-            pdf.getBase64((encodedPdf) => {
-                content = encodedPdf;
-            });
             pdf.getDataUrl(function (outDoc) {
                 document.getElementById('pdfV').src = outDoc;
                 isUpdating = false;
