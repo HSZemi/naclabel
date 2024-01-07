@@ -9,6 +9,10 @@
         html {
             background-color: #111;
         }
+
+        #daut {
+            transition: opacity 2s;
+        }
     </style>
 </head>
 <body>
@@ -45,6 +49,15 @@
                 <div id="qrcode"></div>
             </figure>
         </article>
+    </div>
+</div>
+<div id="daut" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: none; opacity: 0;">
+    <div class="tile">
+        <div class="tile is-child notification is-dark">
+            <figure class="image is-square">
+                <img src="daut.jpg" alt="DauT"/>
+            </figure>
+        </div>
     </div>
 </div>
 <script src="qrcode.min.js"></script>
@@ -91,10 +104,24 @@
             document.getElementById("count").innerText = result.printed;
         });
     }
+
+    const daut = () => {
+        document.getElementById('daut').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('daut').style.opacity = '1';
+            setTimeout(() => {
+                document.getElementById('daut').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('daut').style.display = 'none';
+                }, 2000);
+            }, 7000);
+        }, 100);
+    }
     reloadPrintedCounter();
     updateQrCode();
     setInterval(updateQrCode, 60_000);
     setInterval(reloadPrintedCounter, 10_000);
+    setInterval(daut, 600_000);
 </script>
 </body>
 </html>
